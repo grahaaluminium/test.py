@@ -2,51 +2,47 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 
-# Fungsi untuk mengambil data saham dari Yahoo Finance
-def get_stock_data(tickers, start_date, end_date):
-    data = {}
-    ticker_first_dates = {}
+#add data stock
+portfolioTicker = []
+portfolioData = []
+while len(portfolioTicker) < 30:
+  st.write("Portfolio anda masih kurang",30-len(portfolioTicker),"ticker. Mohon isi ticker pilihan anda")
+  tickerSelect = list(map(str, input().split(",")))
+  for i in range(30-len(portfolioTicker)):
+    tickerSelect_data = yf.Ticker(tickerSelect[i]).history(period="max")#INI BISA PAKAI SUMBER DATA MANAPUN TIDAK HARUS YFINANCE
+    tickerSelect_data.index = pd.to_datetime(tickerSelect_data.index).date
+    if len(tickerSelect_data) > 1000:
+      portfolioTicker.append(tickerSelect[i])
+      portfolioData.append(tickerSelect_data)
 
-    for ticker in tickers:
-        df = yf.download(ticker, start=start_date, end=end_date)
-        if not df.empty:
-            ticker_first_dates[ticker] = df.index.min()
-            data[ticker] = df[['Close']].reset_index()
-    
-    return data, ticker_first_dates
+#cleaning and rekonstruk test data
+testStartdate = dt.datetime(1900, 1, 1).date()
+testEnddate = dt.datetime.now().date()
+for i in range(len(portfolioData)):
+   testStartdate = max(testStartdate,portfolioData[i].index.min())
+   testEnddate = min(testEnddate,portfolioData[i].index.max())
 
-# Daftar ticker saham yang ingin diambil
-tickers = [
-    'AAPL', 'GOOGL', 'AMZN', 'MSFT', 'TSLA', 'META', 'NVDA', 'NFLX', 'BA', 'V',
-    'WMT', 'DIS', 'INTC', 'NKE', 'IBM', 'PYPL', 'GS', 'KO', 'PEP', 'MCD',
-    'CAT', 'AMD', 'SNAP', 'SPY', 'QQQ', 'BABA', 'UBER', 'GM', 'RBLX', 'BA', 'SQ'
-]
+for i in range(len(portfolioData)):
+   while not testStartdate in portfolioData[i].index:#INI DI UJI LAGI, CODING INI SDH BENER ATAU TDK
+    testStartdate += datetime.timedelta(days=1)
 
-# Interface Streamlit untuk input tanggal
-st.title("Data Saham Yahoo Finance")
-start_date = st.date_input("Tanggal Mulai", pd.to_datetime("2020-01-01"))
-end_date = st.date_input("Tanggal Akhir", pd.to_datetime("2025-01-01"))
+testDate = testStartdate
+date = []
+data = []
+while testDate < testEnddate:
+  data_array = []
+  for i in range(len(portfolioData)):
+    if testDate in portfolioData[i].index:#INI DI CEK DAN PASTIKAN LAGI
+      data_array.append(portfolioData[i]["Close"].loc[testDate])
+    else:
+      data_array.append(data[len(data)-1][i])
+  date.append(testDate)
+  data.append(data_array)
 
-# Ambil data saham dari Yahoo Finance
-data, ticker_first_dates = get_stock_data(tickers, start_date, end_date)
+  testDate += datetime.timedelta(days=1)
 
-# Menyesuaikan start_date berdasarkan tanggal pertama data yang tersedia
-start_date = pd.to_datetime(start_date)  # Pastikan start_date dalam format pandas.Timestamp
-first_available_date = pd.to_datetime(min(ticker_first_dates.values()))  # Tanggal pertama data tersedia
-
-# Menyesuaikan start_date jika tanggal yang diminta lebih awal daripada tanggal pertama data yang tersedia
-adjusted_start_date = max(start_date, first_available_date)
-
-# Menampilkan informasi tentang penyesuaian tanggal
-st.write(f"Tanggal mulai yang digunakan adalah {adjusted_start_date.strftime('%Y-%m-%d')}")
-
-# Gabungkan semua data menjadi satu DataFrame
-combined_data = pd.concat(data.values(), keys=data.keys(), names=['Ticker', 'Tanggal'])
-
-# Pastikan kolom Tanggal adalah pandas.Timestamp
-combined_data['Tanggal'] = pd.to_datetime(combined_data['Tanggal'])
-
-# Tampilkan tabel dengan data yang telah diurutkan dan sesuai dengan tanggal yang disesuaikan
-st.write("Data Saham - Harga Penutupan")
-st.dataframe(combined_data.loc[combined_data['Tanggal'] >= adjusted_start_date]
-             .sort_values(by=['Tanggal'], ascending=True))
+test_data = pd.DataFrame(data,index=date)
+dataHarga = test_data.to_numpy()
+tanggal = test_data.index.to_numpy()
+st.write("Your Portfolio Ticker:",portfolioTicker)
+st.write("Your Portfolio Data:\n",test_data)
