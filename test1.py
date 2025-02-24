@@ -2,32 +2,34 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 
-# Judul aplikasi
-st.title('Aplikasi Data Saham dari Stooq (via Yahoo Finance)')
+# Fungsi untuk mengambil data saham dari Yahoo Finance
+def get_stock_data(tickers, start_date, end_date):
+    # Mengambil data untuk setiap ticker
+    data = {}
+    for ticker in tickers:
+        df = yf.download(ticker, start=start_date, end=end_date)
+        # Hanya ambil data Close
+        data[ticker] = df[['Close']].reset_index()
+    return data
 
-# Input untuk kode saham
-ticker = st.text_input('Masukkan kode saham (misalnya: AAPL, TSLA, GOOG)', 'AAPL')
+# Daftar ticker saham yang ingin diambil
+tickers = [
+    'AAPL', 'GOOGL', 'AMZN', 'MSFT', 'TSLA', 'META', 'NVDA', 'NFLX', 'BA', 'V',
+    'WMT', 'DIS', 'INTC', 'NKE', 'IBM', 'PYPL', 'GS', 'KO', 'PEP', 'MCD',
+    'CAT', 'AMD', 'SNAP', 'SPY', 'QQQ', 'BABA', 'UBER', 'GM', 'RBLX', 'BA', 'SQ'
+]
 
-# Pilih rentang waktu
-start_date = st.date_input('Tanggal Mulai', pd.to_datetime('2020-01-01'))
-end_date = st.date_input('Tanggal Selesai', pd.to_datetime('2023-01-01'))
+# Interface Streamlit untuk input tanggal
+st.title("Data Saham Yahoo Finance")
+start_date = st.date_input("Tanggal Mulai", pd.to_datetime("2020-01-01"))
+end_date = st.date_input("Tanggal Akhir", pd.to_datetime("2025-01-01"))
 
-# Tombol untuk menarik data
-if st.button('Tarik Data'):
-    # Mengambil data saham dari Yahoo Finance (melalui kode saham)
-    st.write(f'Tarik data untuk {ticker} dari {start_date} hingga {end_date}...')
-    
-    # Ambil data
-    data = yf.download(ticker, start=start_date, end=end_date)
-    
-    # Menampilkan data dalam bentuk tabel
-    st.write('Data Saham:', data)
+# Ambil data saham dari Yahoo Finance
+data = get_stock_data(tickers, start_date, end_date)
 
-    # Plot grafik harga saham
-    st.line_chart(data['Close'])
+# Gabungkan semua data menjadi satu DataFrame
+combined_data = pd.concat(data.values(), keys=data.keys(), names=['Ticker', 'Tanggal'])
 
-# Menyediakan penjelasan tentang aplikasi
-st.sidebar.write("""
-Aplikasi ini memungkinkan Anda untuk menarik data saham dari Yahoo Finance yang juga mencakup data dari Stooq.
-Masukkan kode saham, pilih rentang waktu, dan klik tombol 'Tarik Data' untuk melihat informasi dan grafik harga saham.
-""")
+# Tampilkan tabel dengan data yang telah diurutkan
+st.write("Data Saham - Harga Penutupan")
+st.dataframe(combined_data.sort_values(by=['Tanggal'], ascending=True))
