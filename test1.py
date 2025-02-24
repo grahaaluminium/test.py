@@ -34,7 +34,12 @@ end_date = st.date_input("Tanggal Akhir", pd.to_datetime("2025-01-01"))
 data, ticker_first_dates = get_stock_data(tickers, start_date, end_date)
 
 # Menyesuaikan start_date berdasarkan tanggal pertama data yang tersedia
-adjusted_start_date = max(start_date, min(ticker_first_dates.values()))
+# Pastikan bahwa start_date dan tanggal pertama data yang tersedia adalah dalam format Timestamp
+start_date = pd.to_datetime(start_date)  # Pastikan start_date dalam format pandas.Timestamp
+first_available_date = pd.to_datetime(min(ticker_first_dates.values()))  # Tanggal pertama data tersedia
+
+# Menyesuaikan start_date jika tanggal yang diminta lebih awal daripada tanggal pertama data yang tersedia
+adjusted_start_date = max(start_date, first_available_date)
 
 # Menampilkan informasi tentang penyesuaian tanggal
 st.write(f"Tanggal mulai yang digunakan adalah {adjusted_start_date.strftime('%Y-%m-%d')}")
