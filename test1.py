@@ -54,7 +54,13 @@ if st.button("Add to Portfolio"):
                 st.write(ticker)
                 ticker_split = ticker.split(',')[0]
                 st.write(ticker_split)
-                ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
+                try:
+                    ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
+                    print(ticker_data.head())
+                except URLError as e:
+                    print(f"Failed to retrieve data: {e.reason}")
+                except Exception as e:
+                    print(f"An unexpected error occurred: {e}")
                 st.write("berhasil tarik data")
                 st.write(ticker_data)
                 if len(ticker_data) > 100 and ticker not in portfolio_ticker:
