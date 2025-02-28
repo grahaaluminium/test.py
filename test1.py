@@ -54,16 +54,8 @@ if st.button("Add to Portfolio"):
                 st.write(ticker)
                 ticker_split = ticker.split(',')[0]
                 st.write(ticker_split)
-                try:
-                    # Try to read the CSV from the URL
-                    ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
-                    st.write("berhasil tarik data")
-                except urllib.error.URLError as e:
-                    st.error(f"URLError: Failed to fetch data from the URL. {e}")
-                except Exception as e:
-                    st.error(f"An unexpected error occurred: {e}")
-                # ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
-                # st.write("berhasil tarik data")
+                ticker_data = pd.read_csv(https://stooq.com/q/d/l/?s='aa.us'&i=d')
+                st.write("berhasil tarik data")
                 st.write(ticker_data)
                 if len(ticker_data) > 100 and ticker not in portfolio_ticker:
                     ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
