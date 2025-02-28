@@ -52,6 +52,7 @@ if st.button("Add to Portfolio"):
             for ticker in saham:
                 st.write(ticker)
                 ticker_split = ticker.split(',')[0]
+                st.write(ticker_split)
                 ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
                 st.write("berhasil tarik data")
                 st.write(ticker_data)
