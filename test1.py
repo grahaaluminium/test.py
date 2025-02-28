@@ -54,9 +54,20 @@ if st.button("Add to Portfolio"):
                 st.write(ticker)
                 ticker_split = ticker.split(',')[0]
                 st.write(ticker_split)
-                ticker_data = pd.read_csv('https://stooq.com/q/d/l/?s=aa.us&i=d')
-                st.write("berhasil tarik data")
-                st.write(ticker_data)
+                # ticker_data = pd.read_csv('https://stooq.com/q/d/l/?s=aa.us&i=d')
+                url = f'https://stooq.com/q/d/l/?s={ticker_split}&i=d'
+                response = requests.get(url)
+                response.raise_for_status()  # Check if request was successful
+                
+                # Check if the response contains CSV data
+                if response.headers['Content-Type'] == 'text/csv':
+                    ticker_data = pd.read_csv(io.StringIO(response.text))
+                    st.write("berhasil tarik data")
+                    st.write(ticker_data)
+                else:
+                    st.error(f"Unexpected content type: {response.headers['Content-Type']}")
+                # st.write("berhasil tarik data")
+                # st.write(ticker_data)
                 if len(ticker_data) > 100 and ticker not in portfolio_ticker:
                     ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
                     portfolio_data.append(ticker_data['Close'])
