@@ -24,6 +24,7 @@ url = f"https://stooq.com/q/d/l/?s={symbol}&d1={start_str.replace('-', '')}&d2={
 if st.button("Tarik Data Saham"):
     try:
         # Mengambil data CSV dari Stooq
+        st.write("mulai")   
         response = requests.get(url)
         st.write(response.status_code)   
         if response.status_code == 200:
