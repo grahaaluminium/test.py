@@ -2,4 +2,4 @@ streamlit
 yfinance
 pandas
 pandas_datareader
-requests streamlit
+requests
