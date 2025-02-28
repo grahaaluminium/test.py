@@ -39,6 +39,7 @@ else:
 
 saham = st.multiselect("Select Stock:", options=saham_options)
 st.write(saham)
+st.write(len(saham))
 
 # Tombol untuk menambahkan ke portofolio
 if st.button("Add to Portfolio"):
@@ -49,7 +50,9 @@ if st.button("Add to Portfolio"):
         if data_source == 'stooq':
             st.write("masuk stooq")
             for ticker in saham:
+                st.write(ticker)
                 ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker}&i=d')
+                st.write("berhasil tarik data")
                 st.write(ticker_data)
                 if len(ticker_data) > 100 and ticker not in portfolio_ticker:
                     ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
