@@ -54,7 +54,7 @@ if st.button("Add to Portfolio"):
                 st.write(ticker)
                 ticker_split = ticker.split(',')[0]
                 st.write(ticker_split)
-                ticker_data = pd.read_csv('https://stooq.com/q/d/l/?s="aa.us"&i=d')
+                ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={aa.us}&i=d')
                 st.write("berhasil tarik data")
                 st.write(ticker_data)
                 if len(ticker_data) > 100 and ticker not in portfolio_ticker:
