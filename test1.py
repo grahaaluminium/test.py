@@ -27,7 +27,7 @@ if st.button("Tarik Data Saham"):
         response = requests.get(url)
 
         if response.status_code == 200:
-            
+        st.write(response.text)    
             # Membaca data CSV ke dalam DataFrame
             data = pd.read_csv(StringIO(response.text))
             st.write(data)
