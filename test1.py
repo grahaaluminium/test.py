@@ -4,6 +4,8 @@ import datetime as dt
 import random
 import urllib.request
 import urllib.error
+import requests
+import io
 
 # Judul aplikasi
 st.title("CREATE TEST DATA")
