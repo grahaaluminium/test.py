@@ -25,9 +25,9 @@ if st.button("Tarik Data Saham"):
     try:
         # Mengambil data CSV dari Stooq
         response = requests.get(url)
-
+        st.write(response)   
         if response.status_code == 200:
-        st.write(StringIO(response.text))    
+         
             # Membaca data CSV ke dalam DataFrame
             data = pd.read_csv(StringIO(response.text))
             st.write(data)
