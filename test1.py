@@ -55,7 +55,7 @@ if st.button("Add to Portfolio"):
                 st.write(ticker_split)
                 try:
                     # Try to read the CSV from the URL
-                     ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
+                    ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker_split}&i=d')
                     st.write("berhasil tarik data")
                 except urllib.error.URLError as e:
                     st.error(f"URLError: Failed to fetch data from the URL. {e}")
