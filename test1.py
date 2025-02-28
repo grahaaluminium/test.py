@@ -47,6 +47,7 @@ if st.button("Add to Portfolio"):
     else:
         portfolio_data, portfolio_ticker = [], []
         if data_source == 'stooq':
+            st.write("masuk stooq")
             for ticker in saham:
                 ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker}&i=d')
                 st.write(ticker_data)
