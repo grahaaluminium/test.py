@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import datetime as dt
 import random
-import io
+import urllib.request
+import urllib.error
 
 # Judul aplikasi
 st.title("CREATE TEST DATA")
