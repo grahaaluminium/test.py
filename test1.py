@@ -3,7 +3,8 @@ import pandas as pd
 import datetime as dt
 import random
 import urllib.request
-import urllib.error
+from urllib.error import URLError  # Import URLError explicitly
+
 
 # Judul aplikasi
 st.title("CREATE TEST DATA")
