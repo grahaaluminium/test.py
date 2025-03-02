@@ -19,7 +19,7 @@ end_str = end_date.strftime("%Y-%m-%d")
 
 # URL API Stooq untuk mengunduh data saham dalam format CSV
 # url = f"https://stooq.com/q/d/l/?s={symbol}&d1={start_str.replace('-', '')}&d2={end_str.replace('-', '')}&c=1"
-url = f"https://stooq.com/q/d/l/?s={symbol}&d1"
+url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
 
 # Tombol untuk menarik data
 if st.button("Tarik Data Saham"):
