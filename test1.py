@@ -48,14 +48,18 @@ if st.button("Add to Portfolio"):
         portfolio_data, portfolio_ticker = [], []
         if data_source == 'stooq':
             for ticker in saham:
-                ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker}&i=d')
-                if len(ticker_data) > 100 and ticker not in portfolio_ticker:
-                    ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
-                    portfolio_data.append(ticker_data['Close'])
-                    portfolio_ticker.append(ticker)
+                url = f"https://stooq.com/q/d/l/?s={ticker}&d1"
+                response = requests.get(url)
+                st.write(response.status_code) 
+                if response.status_code == 200:
+                    ticker_data = pd.read_csv(StringIO(response.text))
                     st.write(ticker_data)
-                else:
-                    st.write(ticker)
+                    if len(ticker_data) > 100 and ticker not in portfolio_ticker:
+                        ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
+                        portfolio_data.append(ticker_data['Close'])
+                        portfolio_ticker.append(ticker)
+                    else:
+                        st.write(ticker)
         elif data_source == 'local':
             uploaded_files = st.file_uploader("Upload File From Local Computer:", type=['csv'], accept_multiple_files=True)
             for uploaded_file in uploaded_files:
