@@ -50,7 +50,7 @@ if st.button("Add to Portfolio"):
         portfolio_data, portfolio_ticker = [], []
         if data_source == 'stooq':
             for ticker in saham:
-                url = f"https://stooq.com/q/d/l/?s={ticker}&d1"
+                url = f"https://stooq.com/q/d/l/?s={ticker.split(',')[0]}&d1"
                 response = requests.get(url)
                 st.write(response.status_code) 
                 if response.status_code == 200:
