@@ -46,7 +46,6 @@ if select_mode == 'Random Select':
 else:
     saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
 
-
 # Tombol untuk menambahkan ke portofolio
 if st.button("Add to Portfolio"):
     if len(saham) < 5:
