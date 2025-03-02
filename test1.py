@@ -3,6 +3,8 @@ import pandas as pd
 import datetime as dt
 import random
 import io
+import requests
+from io import StringIO
 
 # Judul aplikasi
 st.title("CREATE TEST DATA")
