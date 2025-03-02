@@ -1,48 +1,80 @@
 import streamlit as st
 import pandas as pd
-import requests
-from io import StringIO
+import datetime as dt
+import random
+import io
 
-# Judul aplikasi Streamlit
-st.title("Aplikasi Tarik Data Saham dari Stooq")
+# Judul aplikasi
+st.title("CREATE TEST DATA")
 
-# Input simbol saham (misalnya: AAPL, TSLA)
-symbol = st.text_input("Masukkan simbol saham (misal: AAP, TSLA)", "AAPL.US")
+# Load data
+data_stooq_ticker = pd.read_csv('https://raw.githubusercontent.com/guangyoung/dataStock/refs/heads/main/stooq_tickers.csv')
+data_yfinance_ticker = pd.read_csv('https://raw.githubusercontent.com/guangyoung/dataStock/refs/heads/main/stooq_tickers.csv')
 
-# Pilihan rentang tanggal
-start_date = st.date_input("Tanggal Mulai", pd.to_datetime("2020-01-01"))
-end_date = st.date_input("Tanggal Selesai", pd.to_datetime("2025-01-01"))
+# Dropdown untuk memilih sumber data
+data_source = st.selectbox("Data Source:", options=['stooq', 'yahooFinance', 'local'], index=0)
 
-# Mengkonversi tanggal ke format yang dibutuhkan oleh Stooq (yyyy-mm-dd)
-start_str = start_date.strftime("%Y-%m-%d")
-end_str = end_date.strftime("%Y-%m-%d")
+# Dropdown untuk memilih exchange
+if data_source == 'stooq':
+    exchange_options = data_stooq_ticker.columns.tolist()
+elif data_source == 'yahooFinance':
+    exchange_options = data_yfinance_ticker.columns.tolist()
+else:
+    exchange_options = []
 
-# URL API Stooq untuk mengunduh data saham dalam format CSV
-url = f"https://stooq.com/q/d/l/?s={symbol}&d1={start_str.replace('-', '')}&d2={end_str.replace('-', '')}&c=1"
-# url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
+exchange = st.selectbox("Exchange:", options=exchange_options, index=0 if exchange_options else None)
 
-# Tombol untuk menarik data
-if st.button("Tarik Data Saham"):
-    try:
-        # Mengambil data CSV dari Stooq
-        st.write("mulai")   
-        response = requests.get(url)
-        st.write(response.headers)
-        st.write(response.status_code) 
-        if response.status_code == 200:
-         
-            # Membaca data CSV ke dalam DataFrame
-            data = pd.read_csv(StringIO(response.text))
-            st.write(data)
-            data['Date'] = pd.to_datetime(data['Date'])
+# Dropdown untuk memilih tahun mulai
+start_year = st.selectbox("Start Year:", options=[str(year) for year in range(1991, 2015)], index=0)
 
-            # Menampilkan data dalam bentuk tabel
-            st.write(f"Data saham {symbol} dari {start_date} hingga {end_date}:")
-            st.dataframe(data)
+# Dropdown untuk memilih mode seleksi
+select_mode = st.selectbox("Select Mode:", options=['Manual Select', 'Random Select'], index=0)
 
-            # Menampilkan grafik harga saham
-            st.line_chart(data.set_index('Date')['Close'])
-        else:
-            st.error("Gagal mengambil data dari Stooq, pastikan simbol saham benar.")
-    except Exception as e:
-        st.error(f"Gagal mengambil data: {e}")
+# Dropdown untuk memilih saham
+if data_source in ['stooq', 'yahooFinance']:
+    ticker_data = data_stooq_ticker if data_source == 'stooq' else data_yfinance_ticker
+    saham_options = [stock for stock in ticker_data[exchange].dropna().tolist() if dt.datetime.strptime(stock.split(',')[1], '%Y%m%d').year < int(start_year)]
+else:
+    saham_options = []
+
+saham = st.multiselect("Select Stock:", options=saham_options)
+
+
+# Tombol untuk menambahkan ke portofolio
+if st.button("Add to Portfolio"):
+    if len(saham) < 5:
+        st.warning(f"Portfolio anda masih kurang {30 - len(saham)} ticker. Mohon isi ticker dengan total sejumlah 30.")
+    else:
+        portfolio_data, portfolio_ticker = [], []
+        if data_source == 'stooq':
+            for ticker in saham:
+                ticker_data = pd.read_csv(f'https://stooq.com/q/d/l/?s={ticker}&i=d')
+                if len(ticker_data) > 100 and ticker not in portfolio_ticker:
+                    ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
+                    portfolio_data.append(ticker_data['Close'])
+                    portfolio_ticker.append(ticker)
+                    st.write(ticker_data)
+                else:
+                    st.write(ticker)
+        elif data_source == 'local':
+            uploaded_files = st.file_uploader("Upload File From Local Computer:", type=['csv'], accept_multiple_files=True)
+            for uploaded_file in uploaded_files:
+                ticker_data = pd.read_csv(uploaded_file)
+                ticker_data.set_index(pd.to_datetime(ticker_data['Date']), inplace=True)
+                ticker = uploaded_file.name.rsplit('.', 1)[0]
+                if len(ticker_data) > 0 and ticker not in portfolio_ticker:
+                    portfolio_data.append(ticker_data['Close'])
+                    portfolio_ticker.append(ticker)
+        st.write(portfolio_data)
+        if len(portfolio_data) >= 5:
+            test_start_date = max([data.index.min() for data in portfolio_data])
+            st.write(test_start_date)
+            test_end_date = min([data.index.max() for data in portfolio_data])
+            st.write(test_end_date)
+            date_range = pd.date_range(test_start_date, test_end_date)
+            date_range = date_range[~date_range.weekday.isin([5, 6])]
+            test_data = pd.DataFrame([
+                [data.loc[test_date] if test_date in data.index else data.loc[:test_date].iloc[-1] for data in portfolio_data]
+                for test_date in date_range
+            ], index=date_range.date)
+            st.write(test_data)
