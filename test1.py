@@ -43,6 +43,7 @@ if 'saham' not in st.session_state:
     st.session_state.tickers = []
 if select_mode == 'Random Select':
     st.session_state.tickers = random.sample(saham_options, 30)
+    saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
 else:
     saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
 
