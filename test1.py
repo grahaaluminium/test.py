@@ -48,6 +48,10 @@ if 'saham' not in st.session_state:
 if st.button('Choose Random Stocks'):
     st.session_state.tickers = random.sample(saham_options, 30)
 saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
+if len(saham) > 30:            
+    st.error("Ticker yang anda pilih lebih dari 30")
+elif len(saham) == 30:
+    st.success("Proses selesai!")
 
 
 # Tombol untuk menambahkan ke portofolio
