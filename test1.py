@@ -27,7 +27,7 @@ if st.button("Tarik Data Saham"):
         # Mengambil data CSV dari Stooq
         st.write("mulai")   
         response = requests.get(url)
-        st.write(response)
+        st.write(response.headers)
         st.write(response.status_code) 
         if response.status_code == 200:
          
