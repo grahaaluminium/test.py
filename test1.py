@@ -30,7 +30,7 @@ exchange = st.selectbox("Exchange:", options=exchange_options, index=0 if exchan
 start_year = st.selectbox("Start Year:", options=[str(year) for year in range(1991, 2015)], index=0)
 
 # Dropdown untuk memilih mode seleksi
-select_mode = st.selectbox("Select Mode:", options=['Manual Select', 'Random Select'], index=0)
+# select_mode = st.selectbox("Select Mode:", options=['Manual Select', 'Random Select'], index=0)
 
 # Dropdown untuk memilih saham
 if data_source in ['stooq', 'yahooFinance']:
