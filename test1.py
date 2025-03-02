@@ -7,7 +7,7 @@ from io import StringIO
 st.title("Aplikasi Tarik Data Saham dari Stooq")
 
 # Input simbol saham (misalnya: AAPL, TSLA)
-symbol = st.text_input("Masukkan simbol saham (misal: AAPL, TSLA)", "AAPL")
+symbol = st.text_input("Masukkan simbol saham (misal: AAP, TSLA)", "AAPL.US")
 
 # Pilihan rentang tanggal
 start_date = st.date_input("Tanggal Mulai", pd.to_datetime("2020-01-01"))
@@ -18,8 +18,8 @@ start_str = start_date.strftime("%Y-%m-%d")
 end_str = end_date.strftime("%Y-%m-%d")
 
 # URL API Stooq untuk mengunduh data saham dalam format CSV
-# url = f"https://stooq.com/q/d/l/?s={symbol}&d1={start_str.replace('-', '')}&d2={end_str.replace('-', '')}&c=1"
-url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
+url = f"https://stooq.com/q/d/l/?s={symbol}&d1={start_str.replace('-', '')}&d2={end_str.replace('-', '')}&c=1"
+# url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
 
 # Tombol untuk menarik data
 if st.button("Tarik Data Saham"):
