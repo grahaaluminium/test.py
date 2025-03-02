@@ -41,11 +41,13 @@ else:
 
 if 'saham' not in st.session_state:
     st.session_state.tickers = []
-if select_mode == 'Random Select':
+# if select_mode == 'Random Select':
+#     st.session_state.tickers = random.sample(saham_options, 30)
+#     saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
+# else:
+if st.button('Choose Random Stocks'):
     st.session_state.tickers = random.sample(saham_options, 30)
-    saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
-else:
-    saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
+saham = st.multiselect("Select Stock:", options=saham_options, default=st.session_state.tickers)
 
 
 # Tombol untuk menambahkan ke portofolio
